@@ -1,0 +1,155 @@
+<div class="container-fluid city-width">
+
+  <!-- Alerts -->
+  <div id="alert-message" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong>Error</strong>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div id="alert-message2" class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>New City Added</strong>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="row" id="addNewCityRow">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-edit"></i>New City
+          <div class="card-header-actions">
+            <button type="button" class="card-header-action btn btn-link btn-minimize"(click)="toggleCollapse()"><i class={{iconCollapse}}></i></button>
+          </div>
+        </div>
+        <div (collapsed)="collapsed($event)"
+             (expanded)="expanded($event)"
+             [collapse]="isCollapsed"
+             class="card-body">
+          <form class="form-horizontal"
+                id="newCity" 
+                #formDirective="ngForm"
+                (ngSubmit)="saveCity(city.value, formDirective)">
+
+            <div class="row">
+              <!-- City -->
+              <div class="form-group col-6">
+                <label class="col-form-label" for="prependedInput">City</label>               
+                  <div class="input-prepend input-group">
+                    <input class="form-control" 
+                          id="city"
+                          [(ngModel)]='city.city' 
+                          [ngClass]="{'is-invalid':city.errors && city.touched}"
+                          name="city"
+                          size="16" 
+                          type="text" 
+                          #city="ngModel"
+                          required>
+                  </div>
+                  <span class="invalid-feedback">Insert city name</span>               
+              </div>
+              <!-- States -->
+              <!-- <div class="form-group col-6">
+                <label class="col-form-label" for="exampleFormControlSelect1">States:</label>
+                <select class="form-control" name="stateSelect" [(ngModel)]="selectedStateId">
+                  <option style="display:none;"></option>
+                  <option *ngFor="let state of states" [value]="state.id">{{ state.state }}</option>
+                </select>
+                <span class="help-block help-text">Select state to add to city</span>
+              </div> -->
+              <!-- States -->
+              <div class="form-group col-6">
+                <label class="col-form-label" for="exampleFormControlSelect1">States:</label>
+                <select class="form-control"
+                        [(ngModel)]="selectedStateId"
+                        [ngClass]="{'is-invalid':stateSelect.errors && stateSelect.touched}"
+                        name="stateSelect" 
+                        #stateSelect="ngModel"
+                        required>
+                  <option style="display:none;"></option>
+                  <option *ngFor="let state of states" [value]="state.id">{{ state.state }}</option>
+                </select>
+                <span class="invalid-feedback">Select state to add to city</span>
+              </div>
+            </div>
+                       
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Save changes</button>
+              <button class="btn btn-secondary" type="button" (click)="toggleCollapse()">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div> 
+  </div>
+</div>
+
+
+<button id="cityModalButton" data-toggle="modal" (click)="largeModal.show()" hidden>OPEN MODAL</button>
+
+<div bsModal #largeModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Edit city name</h4>
+        <button type="button" class="close" (click)="largeModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <form class="form-horizontal">
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="col-form-label" for="prependedInput">City</label>
+                <div class="controls">
+                  <div class="input-prepend input-group">
+                  <input class="form-control" size="16" type="text" value={{cityForEdit.id}} #idUpdate hidden>
+                    <input class="form-control" size="16" type="text" value={{cityForEdit.city}} #cityUpdate>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="largeModal.hide()">Close</button>
+        <button type="button" class="btn btn-primary" 
+        (click)="largeModal.hide();updateCity(idUpdate.value, cityUpdate.value)">
+        Save changes</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<button id="cityModalDeleteButton" data-toggle="modal" (click)="largeModalDelete.show()" hidden>OPEN MODAL</button>
+<div bsModal #largeModalDelete="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Delete city</h4>
+        <button type="button" class="close" (click)="largeModalDelete.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+     
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="largeModalDelete.hide()">Close</button>
+        <button type="button" class="btn btn-danger" 
+        (click)="largeModalDelete.hide();deleteCity()">
+        Delete</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<app-customtable 
+  [data]="cities" 
+  [columns]="columnNames" 
+  [keys]="keys" 
+  (clickedItemIndex)="editClicked($event)"
+  (clickedItemDelete)="deleteClicked($event)">
+</app-customtable>

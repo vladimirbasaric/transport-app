@@ -1,0 +1,33 @@
+#tourOverviewTableAll {
+    font-size: 14px;
+}
+
+#tourOverviewTableClient {
+    font-size: 14px;
+}
+
+#tourOverviewTableCompany {
+    font-size: 14px;
+}
+
+.modal-dialogue, .modal-lg {
+    max-width: 100% !important;
+}
+
+#invoiceReady {
+    display:block; 
+    margin:auto;
+}
+
+#invoiceReady:hover:enabled {
+    color: #20a8d8;
+}
+
+#invoiceCancel {
+    display:block; 
+    margin:auto;
+}
+
+#invoiceCancel:hover:enabled {
+    color: #f86c6b;
+}

@@ -1,0 +1,22 @@
+export interface Load {
+    goods: string,
+    ldm: string,
+    weight: number,
+    kolets: number,
+    price: number, 
+    client_id: number,
+    client_name: string,
+    pickup_city: string,
+    flag1: string,
+    zip1: string,
+    pickup_date: string,
+    exporter: string, 
+    delivery_city: string, 
+    flag2: string, 
+    zip2: string, 
+    delivery_date: string, 
+    importer: string,
+    client_ref: string,
+    invoice: string,
+    invoice_number: string
+}

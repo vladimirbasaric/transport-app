@@ -1,0 +1,49 @@
+version: '3.7'
+
+services:
+  
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend/src:/app/src
+      - /frontend/app/node_modules
+      - ./conf.d:/etc/nginx/conf.d
+      - ./dhparam:/etc/nginx/dhparam
+      - ./certbot/conf:/etc/nginx/ssl
+      - ./certbot/data:/usr/share/nginx/html/letsencrypt
+
+    ports:
+      - '80:80'
+      - '443:443'
+    
+#    networks:
+#      - app-network
+  
+  certbot:
+    image: certbot/certbot:v1.3.0
+    command: certonly --webroot --webroot-path=/usr/share/nginx/html/letsencrypt --email 76756B@gmail.com --agree-tos --no-eff-email -d port-app.com
+    volumes:
+      - './certbot/conf:/etc/letsencrypt'
+      - './certbot/logs:/var/log/letsencrypt'
+      - './certbot/data:/usr/share/nginx/html/letsencrypt'
+ 
+
+
+  backend:
+    container_name: backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - './backend/:/code'
+    expose:
+      - '5000'
+#    networks:
+#      - app-network
+
+#networks:
+#  app-network:
+#    driver: bridge

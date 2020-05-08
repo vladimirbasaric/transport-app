@@ -1,0 +1,65 @@
+<div class="container-fluid">
+  <div class="row" *ngIf="!(keys[0] == 'ldm')">
+  <!--<div class="row">-->
+    <input id="customTableSearch" type="text" placeholder="Search" [(ngModel)]="searchText" class="form-control form-control-sm col-3">
+  </div>
+
+  <table class="table table-condensed table-bordered table-hover">
+    <thead class="thead-dark">
+      <tr>
+        <th *ngFor="let column of columns; let i = index">{{ column }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let dataUnit of data |filter:searchText | paginate: { itemsPerPage: 10, currentPage: p }; let i = index;">
+        <td>{{ 10*(p-1) + i + 1}}</td>
+        <td *ngFor="let key of keys">
+          <span *ngIf="( key != 'flag') && (key != 'flag1') && (key != 'flag2') && (key != 'ldm')">{{ dataUnit[key] }}</span>
+          <span *ngIf="( key == 'flag') || (key == 'flag1') || (key == 'flag2')">
+            <i class="flag-icon flag-icon-{{ dataUnit[key] }} mb-0" [ngClass]="{'h4': key == 'flag', 'h5': (key == 'flag1') || (key == 'flag2') }"></i>
+          </span>
+          <span *ngIf="(key == 'ldm' && parrentComponent == 'trailers')">{{ dataUnit[key] }}</span>
+          <span *ngIf="(key == 'ldm' && (parrentComponent == 'tours' || parrentComponent == 'tour-history'))">
+            <div>
+              <div class="clearfix">
+                <div class="float-left">
+                  <strong>{{ getWidth(10*(p-1) + i) }}</strong>
+                </div>
+                <div class="float-right">
+                  <strong class="text-muted-1"> {{ dataUnit[key] }} </strong>
+                  <small class="text-muted-1">ldm</small>
+                </div>
+              </div>
+              <div class="progress progress-xs">
+                <div class="progress-bar {{loadLdmStyles[i]}}" role="progressbar" [ngStyle]="{'width':getWidth(10*(p-1) + i)}" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+          </span>
+          <span *ngIf="(key == 'ldm' && parrentComponent == 'new-tour')">
+            {{ dataUnit[key] }} 
+          </span>
+        </td>
+        <td *ngIf="((keys[1] != 'flag') && (parrentComponent != 'tours') && (parrentComponent != 'tour-history') && (parrentComponent != 'new-tour'))">
+          <button class="btn btn-sm btn-secondary" style="display:block; margin:auto;" (click)="editClicked(10*(p-1) + i, dataUnit)"><i class="fa fa-edit"></i></button>
+        </td>
+        <td *ngIf="((keys[1] != 'flag') && (parrentComponent != 'tours') && (parrentComponent != 'tour-history'))">
+          <button class="btn btn-sm btn-danger" style="display:block; margin:auto;" (click)="deleteClicked(10*(p-1) + i, dataUnit)"><i class="fa fa-close"></i></button>
+        </td>
+        <td *ngIf="(parrentComponent == 'tours') || (parrentComponent == 'tour-history')">
+          <button class="btn btn-sm btn-secondary btn-pill" style="display:block; margin:auto;" (click)="loadClicked(10*(p-1) + i, dataUnit)"><i class="fa fa-search"></i></button>
+        </td>
+        <td *ngIf="(parrentComponent == 'tours') || (parrentComponent == 'tour-history')">
+          <button class="btn btn-sm btn-secondary btn-pill" style="display:block; margin:auto; color:green;" (click)="loadAddClicked(10*(p-1) + i, dataUnit)"><i class="fa fa-plus"></i></button>
+        </td>
+        <td *ngIf="(parrentComponent == 'tours')">
+          <button class="btn btn-sm btn-secondary btn-pill" style="display:block; margin:auto;" (click)="closeTourClicked(10*(p-1) + i)"><i class="fa fa-history"></i></button>
+        </td>
+        <td *ngIf="(parrentComponent == 'tours')">
+          <button class="btn btn-sm btn-danger" style="display:block; margin:auto;" (click)="tourDeleteClicked(10*(p-1) + i, dataUnit)"><i class="fa fa-close"></i></button>
+        </td>
+
+      </tr>
+    </tbody>
+  </table>
+  <pagination-controls (pageChange)="p = $event"></pagination-controls>
+</div>

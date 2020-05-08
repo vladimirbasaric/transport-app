@@ -1,0 +1,251 @@
+<div class="container-fluid">
+
+  <!-- Alerts -->
+  <div id="alert-message" *ngIf="!validForm && dirtyForm" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong>{{ errorMessage }}</strong>
+    <button type="button" class="close" (click)="errorAlertClicked()" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div id="alert-message2" *ngIf="validForm && !emptyForm" class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>New Trailer Added</strong>
+    <button type="button" class="close" data-dismiss="alert" (click)="successAlertClicked()" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="row" id="addNewTrailerRow">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-plus-square"></i>NEW TRAILER
+          <div class="card-header-actions">
+            <button type="button" class="card-header-action btn btn-link btn-minimize"(click)="toggleCollapse()"><i class={{iconCollapse}}></i></button>
+          </div>
+        </div>
+        <div (collapsed)="collapsed($event)"
+             (expanded)="expanded($event)"
+             [collapse]="isCollapsed"
+             class="card-body">
+          <form class="form-horizontal" 
+                id="newTrailer"
+                #formDirective="ngForm"
+                (ngSubmit)="saveTrailer(registration_number.value, length.value, capacity.value, height.value, formDirective)">
+
+            <div class="row">
+              <!-- Registration Number -->
+              <div class="form-group col-3">
+                <label class="col-form-label" for="prependedInput">Registration Number</label>
+                <div class="input-prepend input-group">                
+                  <input class="form-control" 
+                        id="registration_number"
+                        [(ngModel)]='trailer.registration_number' 
+                        [ngClass]="{'is-invalid':registration_number.errors && registration_number.touched}"
+                        name="registration_number"
+                        size="16" 
+                        type="text"  
+                        #registration_number="ngModel"
+                        required>
+                  <span class="invalid-feedback">Insert registration number for a new trailer</span>   
+                </div>       
+              </div>
+              <!-- Length -->
+              <div class="form-group col-md-3">
+                <label class="col-form-label" for="appendedInput">LDM</label>
+                <div class="input-prepend input-group">
+                  <input class="form-control"
+                        id="length"
+                        [(ngModel)]='trailer.length' 
+                        [ngClass]="{'is-invalid':length.errors && length.touched}"
+                        name="length" 
+                        size="16" 
+                        type="number"  
+                        #length="ngModel"
+                        required>
+                  <span class="invalid-feedback">Insert ldm for a new trailer</span>
+                </div>
+              </div>
+              <!-- Capacity -->
+              <div class="form-group col-md-3">
+                <label class="col-form-label" for="appendedInput">Weight</label>
+                <div class="input-prepend input-group">
+                  <input class="form-control" 
+                        id="capacity"
+                        [(ngModel)]='trailer.capacity' 
+                        [ngClass]="{'is-invalid':capacity.errors && capacity.touched}"
+                        name="capacity"
+                        size="16" 
+                        type="number"  
+                        #capacity="ngModel"
+                        required>
+                  <span class="invalid-feedback">Insert capacity for a new trailer</span>
+                </div>
+              </div>
+              <!-- Height -->
+               <div class="form-group col-md-3">
+                  <label class="col-form-label" for="appendedInput">Height</label>
+                  <div class="input-prepend input-group">
+                    <input class="form-control" 
+                          id="height"
+                          [(ngModel)]='trailer.height' 
+                          [ngClass]="{'is-invalid':height.errors && height.touched}"
+                          name="height"
+                          size="16" 
+                          type="number"  
+                          #height="ngModel"
+                          required>
+                    <span class="invalid-feedback">Insert capacity for a new trailer</span>
+                  </div>
+              </div>
+            </div>
+          
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Save changes</button>
+              <button class="btn btn-secondary" type="button" (click)="toggleCollapse()">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div> 
+  </div>
+
+  <!-- Edit -->
+  <button id="trailersModalButton" data-toggle="modal" (click)="largeModal.show()" hidden>OPEN MODAL</button>
+  <div bsModal #largeModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Edit trailer</h4>
+          <button type="button" class="close" (click)="largeModal.hide()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="container">
+            <form class="form-horizontal">
+              <div class="row">
+                <div class="form-group col-md-3">
+                  <label class="col-form-label" for="prependedInput">Registration number</label>
+                  <div class="controls">
+                    <div class="input-prepend input-group">
+                      <input class="form-control" size="16" type="text" value={{trailerForEdit.id}} #idUpdate hidden>
+                      <input class="form-control" size="16" type="text" value={{trailerForEdit.registration_number}} #registrationUpdate>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group col-md-3">
+                  <label class="col-form-label" for="appendedInput">LDM</label>
+                  <div class="controls">
+                    <div class="input-group">
+                      <input class="form-control" size="16" type="text" value={{trailerForEdit.ldm}} #lengthUpdate>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group col-md-3">
+                  <label class="col-form-label" for="appendedInput">Weight</label>
+                  <div class="controls">
+                    <div class="input-group">
+                      <input class="form-control" size="16" type="text" value={{trailerForEdit.weight}} #capacityUpdate>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group col-md-3">
+                  <label class="col-form-label" for="appendedInput">Height</label>
+                  <div class="controls">
+                    <div class="input-group">
+                      <input class="form-control" size="16" type="text" value={{trailerForEdit.height}} #heightUpdate>
+                      <!--<input type="hidden" value={{ trailerForEdit.company_trailer }} #companyTrailerUpdate>-->
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="largeModal.hide()">Close</button>
+          <button type="button" class="btn btn-primary" 
+          (click)="largeModal.hide();updateTrailer(idUpdate.value, registrationUpdate.value, 
+                                                  lengthUpdate.value, capacityUpdate.value, heightUpdate.value)">
+          Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete -->
+  <button id="trailersModalDeleteButton" data-toggle="modal" (click)="largeModalDelete.show()" hidden>OPEN MODAL</button>
+  <div bsModal #largeModalDelete="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Delete trailer</h4>
+          <button type="button" class="close" (click)="largeModalDelete.hide()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="largeModalDelete.hide()">Close</button>
+          <button type="button" class="btn btn-danger" 
+          (click)="largeModalDelete.hide();deleteTrailer()">
+          Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--<div class="row" style="padding-top:5%; padding-bottom:5%;">
+    <div class="col-md-8">
+      <div class="form-check-inline">
+        <label class="form-check-label" for="radio1">
+        <input type="radio" class="form-check-input" id="radio1" name="optradio" value="option1" 
+         (change)="chooseCompanyTrailers($event)" checked>Company trailers
+      </label>
+      </div>
+      <div class="form-check-inline">
+        <label class="form-check-label" for="radio2">
+          <input type="radio" class="form-check-input" id="radio2" name="optradio" value="option2" 
+          (change)="chooseClientTrailers($event)">Client trailers
+        </label>
+      </div>
+      <div class="form-check-inline">
+        <label class="form-check-label">
+          <input type="radio" class="form-check-input" name="optradio" value="option3" 
+           (change)="chooseAllTrailers($event)">All
+        </label>
+      </div>
+    </div>
+  </div>-->
+
+</div><!-- end of container -->
+
+<app-customtable 
+  [data]="trailers" 
+  [columns]="columnNames" 
+  [keys]="keys" 
+  [parrentComponent]="parrentComponent"
+  (clickedItemIndex)="editClicked($event)"
+  (clickedItemDelete)="deleteClicked($event)">
+</app-customtable>
+
+<!--<app-customtable 
+  [data]="companyTrailers" 
+  [columns]="columnNames" 
+  [keys]="keys" 
+  [parrentComponent]="parrentComponent"
+  (clickedItemIndex)="editClicked($event)"
+  (clickedItemDelete)="deleteClicked($event)"
+  [ngStyle]="{'display':companyTrailersRadioButton ? 'block' : 'none'}">
+</app-customtable>
+
+<app-customtable 
+  [data]="clientTrailers" 
+  [columns]="columnNames" 
+  [keys]="keys" 
+  [parrentComponent]="parrentComponent"
+  (clickedItemIndex)="editClicked($event)"
+  (clickedItemDelete)="deleteClicked($event)"
+  [ngStyle]="{'display':clientTrailersRadioButton ? 'block' : 'none'}">
+</app-customtable>-->

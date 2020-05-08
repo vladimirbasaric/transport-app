@@ -1,0 +1,431 @@
+<div class="container-fluid"> 
+  <!-- Alerts -->
+  <div id="alert-message" *ngIf="!validForm && dirtyForm" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong>{{ errorMessage }}</strong>
+    <button type="button" class="close" (click)="errorAlertClicked()" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div id="alert-message2" *ngIf="validForm && !emptyForm" class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>Success</strong>
+    <button type="button" class="close" data-dismiss="alert" (click)="successAlertClicked()" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div> 
+  <div class="row">
+    <!-- New Truck -->
+    <div class="col-3" id="addNewTruckRow">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-plus-square"></i>NEW TRUCK
+          <div class="card-header-actions">
+            <button type="button" class="card-header-action btn btn-link btn-minimize"(click)="toggleCollapse()"><i class={{iconCollapse}}></i></button>
+          </div>
+        </div>
+        <div (collapsed)="collapsed($event)"
+            (expanded)="expanded($event)"
+            [collapse]="isCollapsed"
+            class="card-body">
+          <form class="form-horizontal" 
+                #formDirective="ngForm"
+                (ngSubmit)="saveTruck(model.value, registration_number.value, formDirective)">
+
+            <div class="row">
+              <!-- Model -->
+              <div class="form-group col-12">
+                <label  class="col-form-label" for="prependedInput">Model:</label>
+                <input  class="form-control form-control-sm"
+                        id="model" 
+                        [(ngModel)]='truck.model'
+                        [ngClass]="{'is-invalid':model.errors && model.touched}"
+                        name="model"
+                        size="16" 
+                        type="text" 
+                        #model="ngModel"
+                        required>                 
+                <span class="invalid-feedback">Insert model for a new truck</span>                
+              </div>
+              <!-- Registration Number -->
+              <div class="form-group col-12">
+                <label  class="col-form-label" for="appendedInput">Registration number</label>                  
+                <input  class="form-control form-control-sm" 
+                        id="registration_number" 
+                        [(ngModel)]='truck.registration_number'
+                        [ngClass]="{'is-invalid':registration_number.errors && registration_number.touched}"
+                        name="registration_number"
+                        size="16" 
+                        type="text" 
+                        #registration_number="ngModel"
+                        required>                 
+                <span class="invalid-feedback">Insert registration number for a new truck</span>                
+              </div>
+            </div>
+
+            <!--<div class="form-check p-3">
+              <input class="form-check-input" type="checkbox" name="companyTruck" [(ngModel)]="companyTruckNew"
+              [ngModelOptions]="{standalone: true}"/>
+              <label class="form-check-label" for="companyTruck">
+                Company Truck
+              </label>
+            </div>-->
+          
+            <div class="form-actions">
+              <button type="submit" class="btn btn-sm btn-primary">Save changes</button>
+              <button class="btn btn-sm btn-secondary" type="button" (click)="toggleCollapse()">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div> 
+    </div>
+
+    <!-- Truck - Driver -->
+    <!--<div class="col-3" id="attachDriverToTruck">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-link"></i>TRUCK - DRIVER
+          <div class="card-header-actions">
+            <button type="button" class="card-header-action btn btn-link btn-minimize"(click)="toggleCollapse2()"><i class={{iconCollapse2}}></i></button>
+          </div>
+        </div>
+        <div (collapsed)="collapsed($event)"
+            (expanded)="expanded($event)"
+            [collapse]="isCollapsed2"
+            class="card-body">
+          <form class="form-horizontal">
+
+            <div class="row">
+              
+              <div class="form-group col-12">
+                <label class="col-form-label" for="exampleFormControlSelect1">Trucks:</label>
+                <select class="form-control form-control-sm" 
+                        id="truckDriverSelect"
+                        name="truckDriverSelect" 
+                        [(ngModel)]="selectedTruckDriverId"
+                        [ngClass]="{'is-invalid':truckDriverSelect.errors && truckDriverSelect.touched}"
+                        #truckDriverSelect = 'ngModel'
+                        required>
+                  <option style="display:none;"></option>
+                  <option *ngFor="let truck of trucks" [value]="truck.id">{{ getTruckInfo(truck) }}</option>
+                </select>
+                <span class="invalid-feedback">Select truck to add a driver</span>
+              </div>
+
+              <div class="form-group col-12">
+                <label class="col-form-label" for="exampleFormControlSelect2">Drivers:</label>
+                <select class="form-control form-control-sm" 
+                        id="driverSelect"
+                        name="driverSelect" 
+                        [(ngModel)]="selectedDriverId"
+                        [ngClass]="{'is-invalid':driverSelect.errors && driverSelect.touched}"
+                        #driverSelect = 'ngModel'
+                        required>
+                  <option style="display:none;"></option>
+                  <option *ngFor="let driver of drivers" [value]="driver.id">{{ getDriverFullName(driver) }}</option>
+                </select>
+                <span class="invalid-feedback">Pick driver for seleceted truck</span>
+              </div>
+            </div>
+          
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary btn-sm" (click)="attachDriverToTruck()">Add</button>
+              <button type="submit" class="btn btn-danger btn-sm" (click)="removeDriverFromTruck()">Remove</button>
+              <button class="btn btn-sm btn-secondary" type="button" (click)="toggleCollapse2()">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>-->
+
+    <!-- Truck - Trailer -->
+    <div class="col-3" id="attachTrailerToTruck">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-link"></i>TRUCK - TRAILER
+          <div class="card-header-actions">
+            <button type="button" class="card-header-action btn btn-link btn-minimize"(click)="toggleCollapse3()"><i class={{iconCollapse3}}></i></button>
+          </div>
+        </div>
+        <div (collapsed)="collapsed($event)"
+            (expanded)="expanded($event)"
+            [collapse]="isCollapsed3"
+            class="card-body">
+          <form class="form-horizontal">
+            
+            <div class="row">
+              <!-- Trucks -->
+              <div class="form-group col-12">
+                <label class="col-form-label" for="exampleFormControlSelect1">Trucks:</label>
+                <select class="form-control form-control-sm" 
+                        name="truckSelect2" 
+                        [(ngModel)]="selectedTruckTrailerId"                       
+                        [ngClass]="{'is-invalid':truckSelect2.errors && truckSelect2.touched}"
+                        #truckSelect2= 'ngModel'
+                        required>
+                  <option style="display:none;"></option>
+                  <option *ngFor="let truck of trucks" [value]="truck.id">{{ getTruckInfo(truck) }}</option>
+                </select>
+                <span class="invalid-feedback">Select truck to add a trailer</span>
+              </div>
+              <!-- Trailers -->
+              <div class="form-group col-12">
+                <label class="col-form-label" for="exampleFormControlSelect2">Trailers:</label>
+                <select class="form-control form-control-sm" 
+                        name="trailerSelect" 
+                        [(ngModel)]="selectedTrailerId"
+                        [ngClass]="{'is-invalid':trailerSelect.errors && trailerSelect.touched}"
+                        #trailerSelect= 'ngModel'
+                        required>
+                  <option style="display:none;"></option>
+                  <option *ngFor="let trailer of trailers" [value]="trailer.id">{{ trailer.registration_number }}</option>
+                </select>
+                <span class="invalid-feedback">Pick trailer for seleceted truck</span>
+              </div>
+            </div>
+          
+            <div class="form-actions">
+              <button type="submit" class="btn btn-sm btn-primary" (click)="attachTrailerToTruck()">Add</button>
+              <button type="submit" class="btn btn-sm btn-danger" (click)="removeTrailerFromTruck()">Remove</button>
+              <button class="btn btn-sm btn-secondary" type="button" (click)="toggleCollapse3()">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Custom -->
+   <!-- <div class="col-3" id="attachTrailerToTruck">
+      <div class="card bg-secondary">
+        <div class="card-header">
+          <i class="fa fa-link"></i>CUSTOM
+          <div class="card-header-actions">
+            <button type="button" class="card-header-action btn btn-link btn-minimize"(click)="toggleCollapse4()"><i class={{iconCollapse4}}></i></button>
+          </div>
+        </div>
+        <div (collapsed)="collapsed($event)"
+            (expanded)="expanded($event)"
+            [collapse]="isCollapsed4"
+            class="card-body">
+          <form class="form-horizontal" 
+                 #formDirective="ngForm"
+                (ngSubmit)="saveClientTruck(formDirective)">
+            <div class="row">
+             
+              <div class="form-group col-12">
+                <label for="exampleFormControlSelect2">Client:</label>
+                <select class="form-control form-control-sm" 
+                        id="selectedClientName"
+                        name="clientSelect" 
+                        [(ngModel)]="selectedClientName"
+                        [ngClass]="{'is-invalid':selectedClientName.errors && selectedClientName.touched}"
+                        #clientSelect= 'ngModel'
+                        required>
+                  <option style="display:none;"></option>
+                  <option *ngFor="let client of clients" [value]="client.name">{{ client.name }}</option>
+                </select>
+                <span class="invalid-feedback">Pick client</span>
+              </div>
+              
+              <div class="form-group col-12">
+                <label class="col-form-label" for="appendedInput">Truck registration number</label>                  
+                <input class="form-control form-control-sm" 
+                       name="clientTruckRn" 
+                       [(ngModel)]="clientTruckRn"
+                       [ngClass]="{'is-invalid':clientTruckRn.errors && clientTruckRn.touched}"
+                       size="16" 
+                       type="text" 
+                       #clientTruckRn1="ngModel"
+                       required>                 
+                <span class="invalid-feedback">Insert truck registration number</span>                
+              </div>
+              
+              <div class="form-group col-12">
+                <label class="col-form-label" for="prependedInput">Trailer registration number</label>                
+                <input class="form-control form-control-sm"                        
+                       name="client_trailer_rn" 
+                       [(ngModel)]="clientTrailerRn" 
+                       size="16" 
+                       type="text"
+
+                       [ngClass]="{'is-invalid':clientTrailerRn.errors && clientTrailerRn.touched}"
+                       #client_trailer_rn1="ngModel"
+                       required>
+                <span class="invalid-feedback">Insert trailer registration number </span>          
+              </div>
+              
+              <div class="form-group col-12">
+                <label for="ldm">LDM *</label>
+                <input class="form-control form-control-sm" 
+                       id="ldm" 
+                       name="clientTruckLdm" 
+                       type="number"
+                       [(ngModel)]="clientTruckLdm" 
+
+                       [ngClass]="{'is-invalid':clientTruckLdm.errors && clientTruckLdm.touched}"
+                       #ldm="ngModel"
+                       required>
+                <span class="invalid-feedback">Insert ldm</span>          
+              </div>
+              
+              <div class="form-group col-12">
+                <label for="weight">Weight *</label>
+                <input class="form-control form-control-sm" 
+                       id="weight" 
+                       type="number" 
+                       name="clientTruckWeight" 
+                       [(ngModel)]="clientTruckWeight" 
+                       
+                       [ngClass]="{'is-invalid':clientTruckWeight.errors && clientTruckWeight.touched}"
+                       #weight="ngModel"
+                       required>
+                <span class="invalid-feedback">Insert weight</span>          
+              </div>
+              
+              <div class="form-group col-12">
+                <label for="weight">Custom Ref *</label>
+                <input class="form-control form-control-sm" 
+                       id="custom_ref" 
+                       type="text" 
+                       name="clientTruckCustomRef" 
+                       [(ngModel)]="clientTruckCustomRef"
+
+                       [ngClass]="{'is-invalid':clientTruckCustomRef.errors && clientTruckCustomRef.touched}"
+                       #custom_ref="ngModel"
+                       required>
+                <span class="invalid-feedback">Insert custom ref</span>          
+              </div>
+            </div>
+          
+            <div class="form-actions">
+              <button type="submit" class="btn btn-sm btn-primary">Save</button>
+              <button class="btn btn-sm btn-secondary" type="button" (click)="toggleCollapse4()">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+ </div>-->
+
+
+  <!-- Edit -->
+  <button id="trucksModalButton" data-toggle="modal" (click)="largeModal.show()" hidden>OPEN MODAL</button>
+  <div bsModal #largeModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Update truck</h4>
+          <button type="button" class="close" (click)="largeModal.hide()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="container">
+            <form class="form-horizontal">
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <label class="col-form-label" for="prependedInput">Model</label>
+                  <div class="controls">
+                    <div class="input-prepend input-group">
+                      <input class="form-control form-control-sm" size="16" type="text" value={{truckForEdit.id}} #idUpdate hidden>
+                      <input class="form-control form-control-sm" size="16" type="text" value={{truckForEdit.model}} #modelUpdate>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group col-md-6">
+                  <label class="col-form-label" for="appendedInput">Registration number</label>
+                  <div class="controls">
+                    <div class="input-group">
+                      <input class="form-control form-control-sm" size="16" type="text" value={{truckForEdit.registration_number}} #registationNumberUpdate>
+                    </div>
+                  </div>
+                </div>
+              </div>     
+            </form>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-secondary" (click)="largeModal.hide()">Close</button>
+          <button type="button" class="btn btn-sm btn-primary"
+            (click)="largeModal.hide();updateTruck(idUpdate.value, modelUpdate.value, registationNumberUpdate.value)">
+            Save changes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete -->
+  <button id="trucksModalDeleteButton" data-toggle="modal" (click)="largeModalDelete.show()" hidden>OPEN MODAL</button>
+  <div bsModal #largeModalDelete="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Delete truck</h4>
+          <button type="button" class="close" (click)="largeModalDelete.hide()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+     
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-secondary" (click)="largeModalDelete.hide()">Close</button>
+          <button type="button" class="btn btn-sm btn-danger" 
+          (click)="largeModalDelete.hide();deleteTruck()">
+          Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--<div class="row" style="padding-top:5%; padding-bottom:5%;">
+    <div class="col-md-8">
+      <div class="form-check-inline">
+        <label class="form-check-label" for="radio1">
+        <input type="radio" class="form-check-input" id="radio1" name="optradio" value="option1" 
+         (change)="chooseCompanyTrucks($event)" checked>Company trucks
+      </label>
+      </div>
+      <div class="form-check-inline">
+        <label class="form-check-label" for="radio2">
+          <input type="radio" class="form-check-input" id="radio2" name="optradio" value="option2" 
+          (change)="chooseClientTrucks($event)">Client trucks
+        </label>
+      </div>
+      <div class="form-check-inline">
+        <label class="form-check-label">
+          <input type="radio" class="form-check-input" name="optradio" value="option3" 
+           (change)="chooseAllTrucks($event)">All
+        </label>
+      </div>
+    </div>
+  </div>-->
+
+</div> <!-- END OF CONTAINER-->
+
+<app-customtable 
+  [data]="trucks" 
+  [columns]="columnNames" 
+  [keys]="keys" 
+  (clickedItemIndex)="editClicked($event)"
+  (clickedItemDelete)="deleteClicked($event)">
+</app-customtable>
+
+<!--<app-customtable 
+  [data]="companyTrucksArray" 
+  [columns]="columnNames" 
+  [keys]="keys" 
+  (clickedItemIndex)="editClicked($event)"
+  (clickedItemDelete)="deleteClicked($event)"
+  [ngStyle]="{'display':companyTrucks ? 'block' : 'none'}">
+</app-customtable>
+
+<app-customtable 
+  [data]="clientTrucksArray" 
+  [columns]="columnNames" 
+  [keys]="keys" 
+  (clickedItemIndex)="editClicked($event)"
+  (clickedItemDelete)="deleteClicked($event)"
+  [ngStyle]="{'display':clientTrucks ? 'block' : 'none'}">
+</app-customtable>-->
+

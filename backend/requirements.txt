@@ -1,0 +1,12 @@
+mysql-connector
+flask==1.0.2
+Flask-SQLAlchemy
+Flask-WTF
+flask-admin
+Pillow
+MySQL-connector-python
+werkzeug==0.14.1
+flask-cors
+flask-marshmallow
+marshmallow-sqlalchemy
+pyjwt

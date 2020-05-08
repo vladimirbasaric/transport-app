@@ -1,0 +1,380 @@
+<div class="container-fluid">
+  <!-- Alerts -->
+  <div id="alert-message" *ngIf="!validForm && dirtyForm" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong>{{ errorMessage }}</strong>
+    <button type="button" class="close" (click)="errorAlertClicked()" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div id="alert-message2" *ngIf="validForm && !emptyForm" class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>{{ successMessage}}</strong>
+    <button type="button" class="close" data-dismiss="alert" (click)="successAlertClicked()" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  
+  <form #formDirective="ngForm" 
+        (ngSubmit)="saveTour(formDirective)">
+
+        <div class="row">
+          <div class="col-12">
+            <div class="row bg-secondary p-2 mb-4 rounded border border-primary">
+              <!-- Start new tour -->
+              <div class="form-group col-3">
+                <label>Driver:</label>
+                <input  class="form-control form-control-sm" 
+                        id="startTour" 
+                        type="text" 
+                        name="clientDriverName" 
+                        [(ngModel)]="clientDriverName"
+                        required>
+              </div>
+              <!-- Truck registration number -->
+              <div class="form-group col-2">
+                <label>Truck registration:</label>
+                <input  class="form-control form-control-sm" 
+                        id="truckRegistration" 
+                        type="text" 
+                        name="clientTruckRegistration" 
+                        [(ngModel)]="clientTruckRegistration"
+                        required>
+              </div>
+              <!-- Trailer registration number -->
+              <div class="form-group col-2">
+                <label >Trailer registration:</label>
+                <input  class="form-control form-control-sm" 
+                        id="trailerRegistration" 
+                        type="text" 
+                        name="clientTrailerRegistration" 
+                        [(ngModel)]="clientTrailerRegistration"
+                        required>
+              </div>
+              <!-- LMD SUM-->
+              <div class="form-group col-3 my-auto">
+                <div class="clearfix">
+                  <div class="float-left">
+                    <strong>{{ tourLdmPercentage }}</strong>
+                  </div>
+                  <div class="float-right">
+                    <strong class="text-muted-1">{{ tourLdm }} / {{ trailerLDM}} </strong>
+                    <small class="text-muted-1">ldm</small>
+                  </div>
+                </div>
+                <div class="progress progress-xs">
+                  <div class="progress-bar {{ tourLdmStyle }}" role="progressbar" [ngStyle]="{'width':getWidth()}" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+              </div>
+              <!-- Weight SUM-->        
+              <div class="form-group col-1">
+                <label for="weightSum">Weight</label>
+                <input  class="form-control form-control-sm" 
+                        id="weightSum" 
+                        type="number" 
+                        name="weightSum" 
+                        [(ngModel)]="weightSum"
+                        disabled>
+              </div> 
+              <!-- price  SUM-->             
+              <div class="form-group col-1">
+                <label for="priceSum">Price</label>
+                <input  class="form-control form-control-sm" 
+                        id="priceSum" 
+                        type="number" 
+                        name="priceSum" 
+                        [(ngModel)]="priceSum"
+                        disabled>
+              </div> 
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <i class="fa fa-plus-square"></i>Add Load
+                <div class="card-header-actions">
+                  <button type="button" class="card-header-action btn btn-link btn-minimize"(click)="toggleCollapse()"><i class={{iconCollapse}}></i></button>
+                </div>
+              </div>
+    
+              <div (collapsed)="collapsed($event)"
+                (expanded)="expanded($event)"
+                [collapse]="isCollapsed" 
+                class="card-body">
+            
+                <form class="form-horizontal"
+                    #formDirective="ngForm"
+                    (ngSubmit)="addLoad(formDirective)">
+                
+                  <div class="row">
+                    <!-- Goods -->
+                    <div class="form-group col-2 offset-1">
+                      <label for="ldm">Goods *</label>
+                      <input type="text" 
+                             class="form-control form-control-sm" 
+                             id="goods" 
+                             name="good" 
+                             [(ngModel)]="goods"
+                             [ngClass]="{'is-invalid':good.errors && good.touched}"
+                             #good = 'ngModel'
+                             required>
+                    </div>
+                    <!-- LDM -->        
+                    <div class="form-group col-2">
+                      <label for="ldm">LDM *</label>
+                      <input type="number" 
+                             class="form-control form-control-sm" 
+                             id="ldm" 
+                             name="ldm" 
+                             [(ngModel)]="ldm" 
+                             [ngClass]="{'is-invalid':ldms.errors && ldms.touched}"
+                             #ldms = 'ngModel'
+                             required>
+                    </div>
+                    <!-- weight -->
+                    <div class="form-group col-2">
+                      <label for="weight">Weight *</label>
+                      <input type="number" 
+                             class="form-control form-control-sm" 
+                             id="weight" 
+                             name="weight" 
+                             [(ngModel)]="weight" 
+                             [ngClass]="{'is-invalid':weights.errors && weights.touched}"
+                             #weights = 'ngModel'
+                             required>
+                    </div>
+                    <!-- number of palets(colets) -->
+                    <div class="form-group col-2">
+                      <label for="palets">Kolets</label>
+                      <input type="number" 
+                             class="form-control form-control-sm" 
+                             id="palets" 
+                             name="palets" 
+                             [(ngModel)]="kolets"
+                             [ngClass]="{'is-invalid':palet.errors && palet.touched}"
+                             #palet = 'ngModel'
+                             required>
+                    </div>
+                    <!-- price -->             
+                    <div class="form-group col-2 ">
+                      <label for="price">Price</label>
+                      <input type="number" 
+                              class="form-control form-control-sm" 
+                              id="price" 
+                              name="price" 
+                              [(ngModel)]="price"
+                              [ngClass]="{'is-invalid':prices.errors && prices.touched}"
+                             #prices = 'ngModel'
+                             required>
+                    </div>
+                  </div>
+    
+                  <div class="row">
+                    <!-- Client -->
+                    <div class="form-group col-2 offset-1">
+                      <label for="exampleFormControlSelect2">Client:</label>
+                      <select class="form-control form-control-sm" 
+                              name="clientSelect" 
+                              [(ngModel)]="selectedClientId" 
+                              (ngModelChange)="onClientChange($event)"
+                              [ngClass]="{'is-invalid':cli.errors && cli.touched}"
+                               #cli = 'ngModel'
+                              required>
+                        <option style="display:none;"></option>
+                        <option *ngFor="let client of clients" [value]="client.id">{{ client.name }}</option>
+                      </select>
+                    </div>
+                    <!-- Client ref -->
+                    <div class="form-group col-2 ">
+                      <label for="clientRef">Client Ref</label>
+                      <input type="text"    
+                              class="form-control form-control-sm" 
+                              id="clientRef" 
+                              name="clientRef" 
+                              [(ngModel)]="clientRef"
+                              [ngClass]="{'is-invalid':cliref.errors && cliref.touched}"
+                              #cliref = 'ngModel'
+                              required>
+                    </div>
+                  </div>
+    
+                  <hr>
+    
+                  <div class="row">
+                    <!-- Pickup state -->             
+                    <div class="form-group col-2 offset-1">
+                      <label for="pickupState">Pickup state</label>
+                      <select class="form-control form-control-sm" 
+                              name="pickupStateSelect" 
+                              [(ngModel)]="selectedPickupStateId" 
+                              (ngModelChange)="onPickupStateChange($event)"
+                              [ngClass]="{'is-invalid':pickState.errors && pickState.touched}"
+                              #pickState = 'ngModel'
+                              required>
+                        <option style="display:none;"></option>
+                        <option *ngFor="let state of states" [value]="state.id">
+                          {{ state.state }}
+                        </option>
+                      </select>
+                    </div>
+                    <!-- Pickup city -->              
+                    <div class="form-group col-2">
+                      <label for="pickupCity">Pickup city *</label>
+                      <select class="form-control form-control-sm" 
+                              name="pickupCitySelect" 
+                              [(ngModel)]="selectedPickupCityId" 
+                              (ngModelChange)="onPickupCityChange($event)"
+                              [ngClass]="{'is-invalid':pickCity.errors && pickCity.touched}"
+                              #pickCity = 'ngModel'
+                              required>
+                        <option style="display:none;"></option>
+                        <option *ngFor="let pickupCity of pickupCities" [value]="pickupCity.id">
+                          {{ pickupCity.city }}
+                        </option>
+                      </select>
+                    </div>
+                    <!-- Pickup zip code -->             
+                    <div class="form-group col-2">
+                      <label for="pickupZip">ZIP *</label>
+                      <input type="number" 
+                             class="form-control form-control-sm" 
+                             id="pickupZip" 
+                             name="zip1" 
+                             [(ngModel)]="zip1" 
+                             [ngClass]="{'is-invalid':zip.errors && zip.touched}"
+                             #zip = 'ngModel'
+                             required>
+                    </div>             
+                    <!-- Pickup date -->
+                    <div class="form-group col-2">
+                      <label for="pickupDate">Pickup Date</label>
+                      <input class="form-control form-control-sm" 
+                             id="pickupDate" 
+                             type="date" 
+                             name="pickupDate" 
+                             [(ngModel)]="pickupDate"
+                             [ngClass]="{'is-invalid':pickDate.errors && pickDate.touched}"
+                             #pickDate = 'ngModel'
+                             required>
+                    </div>
+                    <!-- Exporter -->             
+                    <div class="form-group col-2">
+                      <label for="exporter">Exporter</label>
+                      <input type="text" 
+                             class="form-control form-control-sm" 
+                             id="exporter" 
+                             name="exporter" 
+                             [(ngModel)]="exporter"
+                             [ngClass]="{'is-invalid':exp.errors && exp.touched}"
+                             #exp = 'ngModel'
+                             required>
+                    </div>             
+                  </div>
+    
+                  <div class="row">
+                    <!-- Delivery state -->             
+                    <div class="form-group col-2 offset-1">
+                      <label for="deliveryState">Delivery state</label>
+                      <select class="form-control form-control-sm" 
+                              name="deliveryStateSelect" 
+                              [(ngModel)]="selectedDeliveryStateId" 
+                              (ngModelChange)="onDeliveryStateChange($event)"
+                              [ngClass]="{'is-invalid':delState.errors && delState.touched}"
+                              #delState = 'ngModel'
+                              required>
+                        <option style="display:none;"></option>
+                        <option *ngFor="let state of states" [value]="state.id">
+                          {{ state.state }}
+                        </option>
+                      </select>
+                    </div>
+                    <!-- Delivery city -->
+                    <div class="col-2">
+                      <div class="form-group">
+                        <label for="deliveryCity">Delivery city</label>
+                        <select class="form-control form-control-sm" 
+                                name="deliveryCitySelect" 
+                                [(ngModel)]="selectedDeliveryCityId" 
+                                (ngModelChange)="onDeliveryCityChange($event)"
+                                [ngClass]="{'is-invalid':delCity.errors && delCity.touched}"
+                                #delCity = 'ngModel'
+                                required>
+                        <option style="display:none;"></option>
+                        <option *ngFor="let deliveryCity of deliveryCities" [value]="deliveryCity.id">
+                          {{ deliveryCity.city }}
+                        </option>
+                      </select>
+                      </div>
+                    </div>
+                    <!-- delivery zip -->
+                    <div class="col-2">
+                      <div class="form-group">
+                        <label for="deliveryZip">ZIP</label>
+                        <input type="number" 
+                               class="form-control form-control-sm" 
+                               id="deliveryZip" 
+                               name="zip2" 
+                               [(ngModel)]="zip2"
+                               [ngClass]="{'is-invalid':delZip.errors && delZip.touched}"
+                                #delZip = 'ngModel'
+                                required>
+                      </div>
+                    </div>
+                    <!-- delivery date -->
+                    <div class="form-group col-2">
+                      <label for="deliveryDate">Delivery Date</label>
+                      <input class="form-control form-control-sm" 
+                             id="deliveryDate" 
+                             type="date" 
+                             name="deliveryDate" 
+                             [(ngModel)]="deliveryDate"
+                             [ngClass]="{'is-invalid':delDate.errors && delDate.touched}"
+                              #delDate = 'ngModel'
+                              required>    
+                    </div> 
+                    <!-- Importer -->             
+                    <div class="form-group col-2">
+                      <label for="importer">Importer</label>
+                      <input type="text" 
+                              class="form-control form-control-sm" 
+                              id="importer" 
+                              name="importer" 
+                              [(ngModel)]="importer"
+                              [ngClass]="{'is-invalid':imp.errors && imp.touched}"
+                              #imp = 'ngModel'
+                              required>
+                    </div>             
+                  </div>
+    
+                  <br>
+              
+                  <div class="form-actions">
+                    <button class="btn btn-sm btn-primary"><i class="fa fa-dot-circle-o"></i> Add Load</button>
+                    <button class="btn btn-sm btn-secondary" type="button" (click)="toggleCollapse()">Cancel</button>
+                  </div>
+                </form>
+              </div> <!--end of card-body-->   
+            </div> <!-- end of card -->
+          </div>
+        </div> <!-- end of row-->
+
+        <div class="row bg-secondary p-2 mb-4 rounded border border-primary">
+          <div class="col-12">
+            
+            <div class="form-actions">
+              <button class="btn btn-primary" ><i class="fa fa-dot-circle-o"></i> Save Tour</button>
+              <button class="btn btn-secondary" type="button" (click)="toggleCollapse()">Cancel</button>
+            </div>
+          </div>
+        </div>
+  </form>
+
+  <label class="h5" for="loadsTable">Tour Loads:</label>
+        <app-customtable 
+          id="loadsTable"
+          name="loadsTable"
+          [data]="loadsView" 
+          [columns]="columnNames" 
+          [keys]="keys" 
+          [parrentComponent]="parrentComponent"
+          (clickedItemIndex)="editClicked($event)"
+          (clickedItemDelete)="deleteClicked($event)">
+        </app-customtable>
+</div>

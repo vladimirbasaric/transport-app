@@ -1,0 +1,320 @@
+<div class="container-fluid">
+  
+  <!-- Alerts -->
+  <div>
+    <div id="alert-message" *ngIf="!validForm && dirtyForm" class="alert alert-danger alert-dismissible fade show" role="alert">
+      <strong>{{ errorMessage }}</strong>
+      <button type="button" class="close" (click)="errorAlertClicked()" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div id="alert-message2" *ngIf="validForm && !emptyForm" class="alert alert-success alert-dismissible fade show" role="alert">
+      <strong>New Driver Added</strong>
+      <button type="button" class="close" data-dismiss="alert" (click)="successAlertClicked()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  </div>
+  
+  <!-- New Driver -->
+  <div class="row" id="addNewDriverRow">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-user-plus"></i>NEW DRIVER
+          <div class="card-header-actions">
+            <button type="button" class="card-header-action btn btn-link btn-minimize"(click)="toggleCollapse()"><i class={{iconCollapse}}></i></button>
+          </div>
+        </div>
+        <div (collapsed)="collapsed($event)"
+             (expanded)="expanded($event)"
+             [collapse]="isCollapsed"
+             class="card-body">
+          <form class="form-horizontal" 
+                id="newDriver" 
+                #formDirective="ngForm"
+                (ngSubmit)="saveDriver(name.value, familyName.value, passportNumber.value, phone.value, cmr.value, company.value, formDirective)">
+            
+            <div class="row">
+              <!-- Name -->
+              <div class="form-group col-4">
+                <label class="col-form-label" for="prependedInput">Name</label>  
+                <div class="input-prepend input-group">
+                  <input class="form-control"
+                        id="driverName" 
+                        [(ngModel)]='driver.name' 
+                        [ngClass]="{'is-invalid':name.errors && name.touched}" 
+                        name="name" 
+                        size="16" 
+                        type="text"                       
+                        #name="ngModel" 
+                        required>                        
+                  <span class="invalid-feedback">Insert name for a new driver</span>
+                  <!-- {driver.name} -->
+                </div>
+              </div>
+              <!-- Family Name -->
+              <div class="form-group col-4">
+                <label class="col-form-label" for="appendedInput">Family name</label>
+                <div class="controls">
+                  <div class="input-group">
+                    <input class="form-control"
+                          id="driverFamilyName" 
+                          [(ngModel)]='driver.familyName'
+                          [ngClass]="{'is-invalid':familyName.errors && familyName.touched}"
+                          name="familyName"
+                          size="16" 
+                          type="text" 
+                          #familyName="ngModel"
+                          required>
+                    <span class=" invalid-feedback">Insert family name for a new driver</span>
+                  </div>
+                </div>
+              </div>
+              <!-- Company Name -->
+              <div class="form-group col-4">
+                <label class="col-form-label" for="appendedInput">Company name</label>
+                <div class="controls">
+                  <div class="input-group">
+                    <input class="form-control" 
+                          id="company" 
+                          [(ngModel)]='driver.company'
+                          [ngClass]="{'is-invalid':company.errors && company.touched}"
+                          name="company"
+                          size="16" 
+                          type="text" 
+                          #company="ngModel"
+                          required>
+                    <span class="invalid-feedback">Insert company name for a new driver</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <!-- Passport -->
+              <div class="form-group col-4">
+                <label class="col-form-label" for="appendedInput">Passport number</label>
+                <div class="controls">
+                  <div class="input-group">
+                    <input class="form-control" 
+                          id="passportNumber" 
+                          [(ngModel)]='driver.passportNumber'
+                          [ngClass]="{'is-invalid':passportNumber.errors && passportNumber.touched}"
+                          name="passportNumber"
+                          size="16" 
+                          type="text" 
+                          #passportNumber="ngModel"
+                          required>
+                    <span class="invalid-feedback">Insert passport number for a new driver</span>
+                  </div>
+                </div>
+              </div>
+              <!-- Phone number -->
+              <div class="form-group col-4">
+                <label class="col-form-label" for="appendedInput">Phone number</label>
+                <div class="controls">
+                  <div class="input-group">
+                    <input class="form-control"
+                          id="phone" 
+                          [(ngModel)]='driver.phone'
+                          [ngClass]="{'is-invalid':phone.errors && phone.touched}"
+                          name="phone"
+                          size="16" 
+                          type="text" 
+                          #phone="ngModel"
+                          required>
+                    <span class="invalid-feedback">Insert phone number for a new driver</span>
+                  </div>
+                </div>
+              </div>
+              <!-- CMR number -->
+              <div class="form-group col-4">
+                <label class="col-form-label" for="appendedInput">CMR number</label>
+                <div class="controls">
+                  <div class="input-group">
+                    <input class="form-control"
+                          id="cmr" 
+                          [(ngModel)]='driver.cmr'
+                          [ngClass]="{'is-invalid':cmr.errors && cmr.touched}"
+                          name="cmr"
+                          size="16"   
+                          type="text" 
+                          #cmr="ngModel"
+                          required>
+                    <span class="invalid-feedback">Insert cmr number for a new driver</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary" >Save changes</button>
+              <button class="btn btn-secondary" type="button" (click)="toggleCollapse()">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div> 
+  </div>
+
+  <!-- Edit -->
+  <button id="driversModalButton" data-toggle="modal" (click)="largeModal.show()" hidden>OPEN MODAL</button>
+  <div bsModal #largeModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Edit driver</h4>
+          <button type="button" class="close" (click)="largeModal.hide()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="container">
+            <form class="form-horizontal">
+
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <label class="col-form-label" for="prependedInput">Name</label>
+                  <div class="controls">
+                    <div class="input-prepend input-group">
+                      <input class="form-control" size="16" type="text" value={{driverForEdit.id}} #idUpdate hidden>
+                      <input class="form-control" size="16" type="text" value={{driverForEdit.name}} #nameUpdate>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group col-md-6">
+                  <label class="col-form-label" for="appendedInput">Family name</label>
+                  <div class="controls">
+                    <div class="input-group">
+                      <input class="form-control" size="16" type="text" value={{driverForEdit.family_name}} #familyNameUpdate>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <label class="col-form-label" for="appendedInput">Passport number</label>
+                  <div class="controls">
+                    <div class="input-group">
+                      <input class="form-control" size="16" type="text" value={{driverForEdit.passport_number}} #passportNumberUpdate>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group col-md-6">
+                  <label class="col-form-label" for="appendedInput">Phone number</label>
+                  <div class="controls">
+                    <div class="input-group">
+                      <input class="form-control" size="16" type="text" value={{driverForEdit.phone}} #phoneUpdate>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <label class="col-form-label" for="appendedInput">CMR number</label>
+                  <div class="controls">
+                    <div class="input-group">
+                      <input class="form-control" size="16" type="text" value={{driverForEdit.cmr}} #cmrUpdate>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group col-md-6">
+                  <label class="col-form-label" for="appendedInput">Company name</label>
+                  <div class="controls">
+                    <div class="input-group">
+                      <input class="form-control" size="16" type="text" value={{driverForEdit.company}} #companyUpdate>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="largeModal.hide()">Close</button>
+          <button type="button" class="btn btn-primary" 
+            (click)="largeModal.hide();updateDriver(idUpdate.value, nameUpdate.value, familyNameUpdate.value, passportNumberUpdate.value,
+            phoneUpdate.value, cmrUpdate.value, companyUpdate.value)">Save changes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete -->
+  <button id="driversModalDeleteButton" data-toggle="modal" (click)="largeModalDelete.show()" hidden>OPEN MODAL</button>
+  <div bsModal #largeModalDelete="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Delete driver</h4>
+          <button type="button" class="close" (click)="largeModalDelete.hide()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="largeModalDelete.hide()">Close</button>
+          <button type="button" class="btn btn-danger" 
+          (click)="largeModalDelete.hide();deleteDriver()">
+          Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!--<div class="row" style="padding-top:5%; padding-bottom:5%;">
+    <div class="col-md-8">
+      <div class="form-check-inline">
+        <label class="form-check-label" for="radio1">
+        <input type="radio" class="form-check-input" id="radio1" name="optradio" value="option1" 
+         (change)="chooseCompanyDrivers($event)" checked>Company drivers
+      </label>
+      </div>
+      <div class="form-check-inline">
+        <label class="form-check-label" for="radio2">
+          <input type="radio" class="form-check-input" id="radio2" name="optradio" value="option2" 
+          (change)="chooseClientDrivers($event)">Client drivers
+        </label>
+      </div>
+      <div class="form-check-inline">
+        <label class="form-check-label">
+          <input type="radio" class="form-check-input" name="optradio" value="option3" 
+           (change)="chooseAllDrivers($event)">All
+        </label>
+      </div>
+    </div>
+  </div>-->
+
+</div> <!-- end of container -->
+
+<app-customtable 
+  [data]="drivers" 
+  [columns]="columnNames" 
+  [keys]="keys" 
+  (clickedItemIndex)="editClicked($event)"
+  (clickedItemDelete)="deleteClicked($event)">
+</app-customtable>
+
+<!--<app-customtable 
+  [data]="companyDrivers" 
+  [columns]="columnNames" 
+  [keys]="keys" 
+  (clickedItemIndex)="editClicked($event)"
+  (clickedItemDelete)="deleteClicked($event)"
+  [ngStyle]="{'display':companyDriversRadioButton ? 'block' : 'none'}">
+</app-customtable>
+
+<app-customtable 
+  [data]="clientDrivers" 
+  [columns]="columnNames" 
+  [keys]="keys" 
+  (clickedItemIndex)="editClicked($event)"
+  (clickedItemDelete)="deleteClicked($event)"
+  [ngStyle]="{'display':clientDriversRadioButton ? 'block' : 'none'}">
+</app-customtable>-->

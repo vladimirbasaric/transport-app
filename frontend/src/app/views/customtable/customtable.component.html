@@ -1,0 +1,22 @@
+<div class="container">
+<div class="row">
+    <input type="text" placeholder="Search" [(ngModel)]="searchText">
+</div>
+<table class="table">
+    <thead>
+        <tr >
+            <th *ngFor="let column of columns"> {{ column }}</th>
+            
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let dataUnit of data |filter:searchText | paginate: { itemsPerPage: 10, currentPage: p }; let i = index">
+          
+           <td *ngFor="let key of keys">{{ dataUnit[key] }}</td>
+           
+        </tr>
+    </tbody>
+        
+</table>
+<pagination-controls (pageChange)="p = $event"></pagination-controls>
+</div>

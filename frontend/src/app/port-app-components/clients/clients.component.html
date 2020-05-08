@@ -1,0 +1,345 @@
+<div class="container-fluid">
+
+   <!-- Alerts -->
+   <div id="alert-message" *ngIf="!validForm && dirtyForm" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong>{{ errorMessage }}</strong>
+    <button type="button" class="close" (click)="errorAlertClicked()" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div id="alert-message2"  *ngIf="validForm && !emptyForm" class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>New Client Added</strong>
+    <button type="button" class="close" data-dismiss="alert" (click)="successAlertClicked()" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="row" id="addNewCityRow">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-edit"></i>New Client
+          <div class="card-header-actions">
+            <button type="button" class="card-header-action btn btn-link btn-minimize"(click)="toggleCollapse()"><i class={{iconCollapse}}></i></button>
+          </div>
+        </div>
+        <div (collapsed)="collapsed($event)"
+             (expanded)="expanded($event)"
+             [collapse]="isCollapsed"
+             class="card-body">
+          <form class="form-horizontal" 
+                #formDirective="ngForm"
+                (ngSubmit)="saveClient(name.value, address.value, pib.value, 
+                 main_id.value, phone_number.value, email.value, forwarder.value, additionalContact.value, formDirective)">
+
+            <div class="row">
+              <!-- Name -->
+              <div class="form-group col-4">
+                <label class="col-form-label" for="prependedInput">Name</label>               
+                <div class="input-prepend input-group">
+                  <input class="form-control" 
+                        id="name"
+                        [(ngModel)]='client.name' 
+                        [ngClass]="{'is-invalid':name.errors && name.touched}" 
+                        name="name"
+                        size="16" 
+                        type="text"  
+                        #name="ngModel"
+                        required>
+                  <span class="invalid-feedback">Insert client name</span>  
+                </div>                
+              </div>
+              <!-- Address -->
+              <div class="form-group col-4">
+                <label class="col-form-label" for="prependedInput">Address</label>                
+                <div class="input-prepend input-group">
+                  <input class="form-control"
+                        id="address" 
+                        [(ngModel)]='client.address' 
+                        [ngClass]="{'is-invalid':address.errors && address.touched}"
+                        name="address"
+                        size="16" 
+                        type="text" 
+                        #address="ngModel"
+                        required>
+                  <span class="invalid-feedback">Insert client address</span>
+                </div>
+              </div>
+              <!-- Pib -->
+              <div class="form-group col-4">
+                <label class="col-form-label" for="prependedInput">Pib</label>               
+                <div class="input-prepend input-group">
+                  <input class="form-control"
+                        id="pib"  
+                        [(ngModel)]='client.pib' 
+                        [ngClass]="{'is-invalid':pib.errors && pib.touched}"
+                        name="pib"
+                        size="16" 
+                        type="text"                         
+                        #pib="ngModel"
+                        required>
+                  <span class="invalid-feedback">Insert client pib</span>
+                </div>               
+              </div>
+            </div>
+
+            <div class="row">
+              <!-- Main ID -->
+              <div class="form-group col-3">
+                <label class="col-form-label" for="prependedInput">Main Id</label>                
+                  <div class="input-prepend input-group">
+                    <input class="form-control" 
+                          id="main_id" 
+                          [(ngModel)]='client.main_id' 
+                          [ngClass]="{'is-invalid':main_id.errors && main_id.touched}"
+                          name="main_id"
+                          size="16" 
+                          type="text" 
+                          #main_id="ngModel"
+                          required>
+                    <span class="invalid-feedback">Insert client main id</span>               
+                  </div>
+              </div>
+              <!-- Phone Number -->
+              <div class="form-group col-3">
+                <label class="col-form-label" for="prependedInput">Phone number</label>               
+                <div class="input-prepend input-group">
+                  <input class="form-control" 
+                        id="phone_number" 
+                        [(ngModel)]='client.phone_number' 
+                        [ngClass]="{'is-invalid':phone_number.errors && phone_number.touched}"
+                        name="phone_number"
+                        size="16" 
+                        type="text" 
+                        #phone_number="ngModel"
+                        required>
+                  <span class="invalid-feedback">Insert client phone number</span>
+                </div>
+              </div>
+              <!-- Email -->
+              <div class="form-group col-3">
+                <label class="col-form-label" for="prependedInput">Email</label>               
+                <div class="input-prepend input-group">
+                  <input class="form-control"
+                        id="email" 
+                        [(ngModel)]='client.email' 
+                        [ngClass]="{'is-invalid':email.errors && email.touched}"
+                        name="email"
+                        size="16" 
+                        type="text" 
+                        #email="ngModel"
+                        required>
+                  <span class="invalid-feedback">Insert client email</span>               
+                </div>
+              </div>
+              <!-- States -->
+              <div class="form-group col-3">
+                <label for="exampleFormControlSelect1">States:</label>
+                <select class="form-control" 
+                        [(ngModel)]="selectedStateId"
+                        [ngClass]="{'is-invalid':stateSelect.errors && stateSelect.touched}"
+                        name="stateSelect" 
+                        #stateSelect="ngModel"
+                        required>
+                  <option style="display:none;"></option>
+                  <option *ngFor="let state of states" [value]="state.id">{{ state.state }}</option>
+                </select>
+                <span class="invalid-feedback">Select state to add to client</span>
+              </div>
+            </div>
+            
+            <div class="row">
+              <!-- Freight Forwarder -->
+              <div class="col-12">
+                <div class="form-group row">
+                <label class="col-2 col-form-label" for="textarea-input">Freight forwarder</label>
+                  <div class="col-10">
+                    <textarea class="form-control form-control-sm"
+                               
+                              [(ngModel)]="client.forwarder"
+                              [ngClass]="{'is-invalid':forwarder.errors && forwarder.touched}"
+                              name="forwarder" 
+                              rows="2"                                
+                              #forwarder="ngModel"
+                              required>
+                    </textarea>
+                    <span class="invalid-feedback">Insert Freight forwarder</span>
+                  </div>
+                </div>
+              </div>
+              <!-- Additional Contact -->
+              <div class="col-12">
+                <div class="form-group row">
+                <label class="col-2 col-form-label" for="textarea-input">Additional Contact</label>
+                  <div class="col-10">
+                    <textarea class="form-control form-control-sm"
+                              id="textarea-input" 
+                              [(ngModel)]="client.additionalContact"
+                              [ngClass]="{'is-invalid':additionalContact.errors && additionalContact.touched}"
+                              name="additionalContact" 
+                              rows="2"  
+                              #additionalContact="ngModel"
+                              required>
+                    </textarea>
+                    <span class="invalid-feedback">Insert Additional Contact</span>
+                  </div>
+                </div>
+              </div>
+            </div> 
+        
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Save changes</button>
+              <button class="btn btn-secondary" type="button" (click)="toggleCollapse()">Cancel</button>
+            </div>
+          </form>
+          </div>
+        </div>
+      </div> 
+    </div>
+</div>
+
+<div>
+<button id="clientModalButton" data-toggle="modal" (click)="largeModal.show()" hidden>OPEN MODAL</button>
+
+<div bsModal #largeModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Edit client</h4>
+        <button type="button" class="close" (click)="largeModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <form class="form-horizontal">
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="col-form-label" for="prependedInput">Name</label>
+                <div class="controls">
+                  <div class="input-prepend input-group">
+                  <input class="form-control" size="16" type="text" value={{clientForEdit.id}} #idUpdate hidden>
+                    <input class="form-control" size="16" type="text" value={{clientForEdit.name}} #nameUpdate>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="col-form-label" for="prependedInput">Address</label>
+                <div class="controls">
+                  <div class="input-prepend input-group">
+                    <input class="form-control" size="16" type="text" value={{clientForEdit.address}} #addressUpdate>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="col-form-label" for="prependedInput">PIB</label>
+                <div class="controls">
+                  <div class="input-prepend input-group">
+                    <input class="form-control" size="16" type="text" value={{clientForEdit.pib}} #pibUpdate>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="col-form-label" for="prependedInput">Main Id</label>
+                <div class="controls">
+                  <div class="input-prepend input-group">
+                    <input class="form-control" size="16" type="text" value={{clientForEdit.main_id}} #mainIdUpdate>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="col-form-label" for="prependedInput">Phone number</label>
+                <div class="controls">
+                  <div class="input-prepend input-group">
+                    <input class="form-control" size="16" type="text" value={{clientForEdit.phone_number}} #phoneNumberUpdate>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="col-form-label" for="prependedInput">Email</label>
+                <div class="controls">
+                  <div class="input-prepend input-group">
+                    <input class="form-control" size="16" type="text" value={{clientForEdit.email}} #emailUpdate>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group col-md-6">
+                <label for="exampleFormControlSelect1">States:</label>
+                <select class="form-control" name="stateSelectEdit" [(ngModel)]="selectedStateIdForEdit">
+                  <option style="display:none;"></option>
+                  <option *ngFor="let state of states" [value]="state.id">{{ state.state }}</option>
+                </select>
+              </div>
+
+              
+            </div>
+            <br>
+            <hr>
+            <div class="row">
+
+              <div class="col-12">
+                <div class="form-group row">
+                <label class="col-2 col-form-label" for="textarea-input">Freight forwarders</label>
+                  <div class="col-10">
+                    <textarea id="textarea-input-edit" name="forwardersEdit" rows="5" value={{clientForEdit.forwarder}} class="form-control form-control-sm" #forwarderUpdate></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <div class="form-group row">
+                <label class="col-2 col-form-label" for="textarea-input">Additional Contact</label>
+                  <div class="col-10">
+                    <textarea  name="additionalContactEdit" rows="5" value={{clientForEdit.additional_contact}} class="form-control form-control-sm" #additionalContactEdit></textarea>
+                  </div>
+                </div>
+              </div>
+
+            </div>  
+
+            
+          </form>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="largeModal.hide()">Close</button>
+        <button type="button" class="btn btn-primary" 
+        (click)="largeModal.hide();updateClient(idUpdate.value, nameUpdate.value, 
+        addressUpdate.value, pibUpdate.value, mainIdUpdate.value, phoneNumberUpdate.value, 
+        emailUpdate.value, forwarderUpdate.value, additionalContactEdit.value)">
+        Save changes</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<button id="clientModalDeleteButton" data-toggle="modal" (click)="largeModalDelete.show()" hidden>OPEN MODAL</button>
+<div bsModal #largeModalDelete="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Delete client</h4>
+        <button type="button" class="close" (click)="largeModalDelete.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+     
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="largeModalDelete.hide()">Close</button>
+        <button type="button" class="btn btn-danger" 
+        (click)="largeModalDelete.hide();deleteClient()">
+        Delete</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<app-customtable 
+  [data]="clients" 
+  [columns]="columnNames" 
+  [keys]="keys" 
+  (clickedItemIndex)="editClicked($event)"
+  (clickedItemDelete)="deleteClicked($event)">
+</app-customtable>
