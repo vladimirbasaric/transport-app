@@ -5,7 +5,7 @@ Flask-WTF
 flask-admin
 Pillow
 MySQL-connector-python
-werkzeug==0.14.1
+werkzeug==0.15.5
 flask-cors
 flask-marshmallow
 marshmallow-sqlalchemy
